@@ -8,3 +8,4 @@ target
 **/data/configs/**/*.ini*
 **/data/out/**/*.gco*
 **/data/done/*.stl*
+slicing-server/src/main/resources/runtime.properties

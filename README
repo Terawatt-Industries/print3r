@@ -22,6 +22,8 @@ Thus, you have to install Maven 3 or higher (http://maven.apache.org/guides/gett
 Once you have maven installed:
 1)  Download the BigSlice Slicing Server source code (as zip or tar ball).
 2)  Unzip/Untar the source.
+3)  copy slicing-server/src/main/resources/runtime.properties.example -> slicing-server/src/main/resources/runtime.properties
+4)  Edit slicing-server/src/main/resources/runtime.properties with the values from your local environment.
 
 Running the App
 ---------------

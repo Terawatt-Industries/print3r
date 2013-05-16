@@ -4,5 +4,5 @@
 ##  Permissions beyond the scope of this license may be available at http://terawattindustries.com.
 
 app.data.path=data
-slicer.exec.path=/Applications/Slic3r.app/Contents/MacOS/slic3r;/Applications/Slic3r-084.app/Contents/MacOS/slic3r
-slicer.exec.outname.filter=slic3r099;slic3r084
+slicer.exec.path=[path-to-slicing-executable]	# can be semi-colon list for multiple execs
+slicer.exec.outname.filter=[name-of-executable-to-use-in-output-filename]
