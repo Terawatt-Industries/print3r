@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    BigSlice Slicing Framework by Longevity Software LLC d.b.a. Terawatt Industries
+    is licensed under a Creative Commons Attribution-NonCommercial 3.0 Unported License.
+    Based on a work at https://github.com/Terawatt-Industries/bigslice.
+    Permissions beyond the scope of this license may be available at http://terawattindustries.com.
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:broker="http://activemq.apache.org/schema/core"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+         http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+  <!-- let Spring do its IoC stuff in this package -->
+  <context:component-scan base-package="com.longevitysoft.java.bigslice.server"/>
+
+  <!-- spring property placeholder, ignore resource not found as the file resource is for unit testing -->
+  <context:property-placeholder location="classpath:camel.properties,file:target/custom.properties"
+                                ignore-resource-not-found="true"/>
+
+  <bean
+      id="runtimeProps"
+      class="org.springframework.beans.factory.config.PropertiesFactoryBean" >
+
+      <property
+          name="location"
+          value="classpath:runtime.properties" />
+  </bean>
+
+  <!-- declare a camel context that scans for classes that is RouteBuilder -->
+  <camel:camelContext id="slicing-server">
+    <camel:package>com.longevitysoft.java.bigslice.server</camel:package>
+    <!-- enable JMX connector so we can connect to the server and browse mbeans -->
+    <!-- Camel will log at INFO level the service URI to use for connecting with jconsole -->
+    <camel:jmxAgent id="agent" createConnector="true"/>
+  </camel:camelContext>
+
+  <!-- lets configure the ActiveMQ JMS broker server -->
+  <broker:broker useJmx="true" persistent="false" brokerName="kBroker1">
+    <broker:transportConnectors>
+      <!-- expose a VM transport for in-JVM transport between AMQ and Camel on the server side -->
+      <broker:transportConnector name="vm" uri="vm://kBroker1"/>
+      <!-- expose a TCP transport for clients to use -->
+      <broker:transportConnector name="tcp" uri="tcp://localhost:${tcp.port}"/>
+    </broker:transportConnectors>
+  </broker:broker>
+
+  <!-- lets configure the Camel ActiveMQ to use the embedded ActiveMQ broker declared above -->
+  <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <property name="brokerURL" value="vm://kBroker1"/>
+  </bean>
+
+</beans>

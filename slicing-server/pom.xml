@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    BigSlice Slicing Framework by Longevity Software LLC d.b.a. Terawatt Industries
+    is licensed under a Creative Commons Attribution-NonCommercial 3.0 Unported License.
+    Based on a work at https://github.com/Terawatt-Industries/bigslice.
+    Permissions beyond the scope of this license may be available at http://terawattindustries.com.
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.longevitysoft.java</groupId>
+        <artifactId>bigslice-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.longevitysoft.java</groupId>
+    <artifactId>bigslice-slicing-server</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>BigSlice :: Slicing Server</name>
+    <description>A server that takes STL files and slices them using Slic3r command line execution.
+    </description>
+    <packaging>bundle</packaging>
+
+    <properties>
+        <camel.osgi.export.pkg>com.longevitysoft.java.bigslice.server.*</camel.osgi.export.pkg>
+        <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool</camel.osgi.import.additional>
+    </properties>
+
+    <dependencies>
+        <!-- required by both client and server -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jms</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-camel</artifactId>
+            <version>${activemq-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-pool</artifactId>
+            <version>${activemq-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons-lang-version}</version>
+        </dependency>
+
+        <!-- xbean is required for ActiveMQ broker configuration in the spring xml file -->
+        <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+            <version>${xbean-spring-version}</version>
+        </dependency>
+        <!-- END SNIPPET: e2 -->
+
+        <!-- for logging using log4j.properties in src/main/resources -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j-version}</version>
+        </dependency>
+        
+        <!-- for testing -->
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-test</artifactId>
+          <scope>test</scope>
+          <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-test-spring</artifactId>
+          <scope>test</scope>
+          <version>${camel.version}</version>
+        </dependency>
+        
+    </dependencies>
+  
+    <profiles>
+        <profile>
+            <id>SlicingServer</id>
+            <properties>
+                <!-- we use Camel spring Main class as the server got all what it needs to start in the camel-server.xml file -->
+                <target.main.class>org.apache.camel.spring.Main</target.main.class>
+                <target.cmd.args>-ac META-INF/spring/camel-server.xml</target.cmd.args>
+            </properties>
+        </profile>
+    </profiles>
+    <build>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>target/classes/features.xml</file>
+									<type>xml</type>
+									<classifier>features</classifier>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+      <!-- Allows the app to be run via 'mvn compile exec:java' -->
+      <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <configuration>
+              <mainClass>${target.main.class}</mainClass>
+              <includePluginDependencies>false</includePluginDependencies>
+              <commandlineArgs>${target.cmd.args}</commandlineArgs>
+          </configuration>
+      </plugin>
+
+		<!-- Allows the app to be run as 'mvn camel:run' see http://camel.apache.org/camel-maven-plugin.html -->
+		<plugin>
+		  <groupId>org.apache.camel</groupId>
+		  <artifactId>camel-maven-plugin</artifactId>
+		  <configuration>
+		    <applicationContextUri>META-INF/spring/*.xml</applicationContextUri>
+              <mainClass>${target.main.class}</mainClass>
+              <includePluginDependencies>false</includePluginDependencies>
+              <commandlineArgs>${target.cmd.args}</commandlineArgs>
+		  </configuration>
+		</plugin>
+    </plugins>
+
+  </build>
+
+</project>

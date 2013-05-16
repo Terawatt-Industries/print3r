@@ -1,0 +1,10 @@
+**/.DS_Store
+target
+**/bin
+**/target
+**/.settings
+**/.classpath
+**/.checkstyle
+**/data/configs/**/*.ini*
+**/data/out/**/*.gco*
+**/data/done/*.stl*
