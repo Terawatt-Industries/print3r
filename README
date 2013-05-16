@@ -11,6 +11,8 @@ BigSlice provides a server that provides a drag-and-drop feature for STL file sl
 
 BigSlice allows you to drag-and-drop STL files into a folder on your computer and automatically outputs GCode.  It's designed to work with Slic3r but it can be easily adapted to work with any slicing software which provides command-line-interface (CLI) execution.
 
+If you run this on your laptop/desktop, or a computer on a trusted network (or cloud server); then you would share the "data/stldrop" and "data/out" folders; then drag STL files to data/stldrop; and finally retrieve output gcode from data/out/...
+
 Why not just use Slic3r for this, for example?  BigSlice is designed for a use-case that's fairly common for 3D printer users:  slicing a single STL file using multiple slicing (Slic3r) configs.  When the server starts, it scans for Slic3r INIs and stores them.  It then uses each INI for slicing STL -> GCode; and outputs the INI used in the output filename.
 
 Installation
