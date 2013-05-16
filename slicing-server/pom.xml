@@ -17,12 +17,12 @@
     <parent>
         <groupId>com.longevitysoft.java</groupId>
         <artifactId>bigslice-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.9-SNAPSHOT</version>
     </parent>
 
     <groupId>com.longevitysoft.java</groupId>
     <artifactId>bigslice-slicing-server</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.9-SNAPSHOT</version>
     <name>BigSlice :: Slicing Server</name>
     <description>A server that takes STL files and slices them using Slic3r command line execution.
     </description>
