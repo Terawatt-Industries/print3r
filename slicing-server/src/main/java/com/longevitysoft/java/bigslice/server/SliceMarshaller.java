@@ -223,7 +223,9 @@ public class SliceMarshaller implements CamelContextAware, InitializingBean {
 			if (null == name) {
 				name = aFile.getName();
 			}
-			ret.add(name);
+			if (name.contains(".ini")) {
+				ret.add(name);
+			}
 		} else if (aFile.isDirectory()) {
 			File[] listOfFiles = aFile.listFiles();
 			if (listOfFiles != null) {
@@ -234,6 +236,12 @@ public class SliceMarshaller implements CamelContextAware, InitializingBean {
 		return ret;
 	}
 
+	/**
+	 * Extracts a gcode output filename from a qualified path.
+	 * 
+	 * @param path
+	 * @return
+	 */
 	public String extractOutputFilenameFromPath(final String path) {
 		StringBuilder ret = new StringBuilder();
 		String p2 = path.replace(".ini", Constants.BLANK);

@@ -2038,12 +2038,12 @@
               <nature>org.eclipse.jdt.core.javanature</nature>
               <nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
             </projectnatures>
-            <additionalConfig>
+<!--            <additionalConfig>
               <file>
                 <name>.checkstyle</name>
                 <location>/camel-eclipse-checkstyle</location>
               </file>
-            </additionalConfig>
+            </additionalConfig> -->
           </configuration>
         </plugin>
         <plugin>

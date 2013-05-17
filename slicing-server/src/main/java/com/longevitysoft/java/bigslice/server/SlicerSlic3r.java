@@ -13,10 +13,11 @@
 package com.longevitysoft.java.bigslice.server;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -26,6 +27,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +40,8 @@ import com.longevitysoft.java.bigslice.Constants;
  * 
  */
 @Service(value = "slic3r")
-public class SlicerSlic3r implements CamelContextAware, Slicer {
+public class SlicerSlic3r implements CamelContextAware, InitializingBean,
+		Slicer {
 
 	private static final transient Logger LOG = LoggerFactory
 			.getLogger(SlicerSlic3r.class);
@@ -67,6 +70,11 @@ public class SlicerSlic3r implements CamelContextAware, Slicer {
 	@Value("#{runtimeProps['app.data.path']}")
 	private String baseDataPath;
 
+	/**
+	 * Thread manager.
+	 */
+	private ExecutorService executorService;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -78,9 +86,6 @@ public class SlicerSlic3r implements CamelContextAware, Slicer {
 			@Header(value = Constants.MSG_HEADER_SLICE_CONFIG_ARRAY_LIST) String configList,
 			@Header(value = Constants.MSG_HEADER_CAMEL_FILE_ABSOLUTE_PATH) String filePath,
 			@Header(value = Constants.MSG_HEADER_OUTPUT_PATH) String headerOutputFilename) {
-		Runtime rt = Runtime.getRuntime();
-		RuntimeExec rte = new RuntimeExec();
-		StreamWrapper error, output;
 		Endpoint epSlice = camel
 				.getEndpoint(Constants.EP_NAME_JMS_QUEUE_PENDINGSTL);
 		Exchange inEx = epSlice.createExchange(ExchangePattern.InOnly);
@@ -150,7 +155,7 @@ public class SlicerSlic3r implements CamelContextAware, Slicer {
 					insToken = Constants.UNDERSCORE + insToken;
 				}
 				// build exec string
-				StringBuilder execStr = new StringBuilder(execPath)
+				final StringBuilder execStr = new StringBuilder(execPath)
 						.append(configFileParam)
 						.append(Constants.SPACE)
 						.append(Constants.SLIC3R_CLI_PARAM_OUTPUT_FILENAME_FORMAT)
@@ -161,32 +166,81 @@ public class SlicerSlic3r implements CamelContextAware, Slicer {
 						.append(Constants.EXT_GCODE).append(Constants.SPACE)
 						.append(filePath);
 				LOG.debug("executing-slic3r: " + execStr + Constants.NEWLINE);
-				// exec process with buffered error and std out
-				Process proc = rt.exec(execStr.toString());
-				error = rte.getStreamWrapper(proc.getErrorStream(),
-						Constants.STREAM_NAME_ERROR);
-				output = rte.getStreamWrapper(proc.getInputStream(),
-						Constants.STREAM_NAME_OUTPUT);
-				int exitVal = 0;
-				error.start();
-				output.start();
-				error.join(3000);
-				output.join(3000);
-				exitVal = proc.waitFor();
-				// TODO process exitVal for caller - decide what to do in
-				// http://camel.apache.org/exception-clause.html
-				LOG.info(new StringBuilder().append("stl-file-path: ")
-						.append(filePath).append(", output-file-path:")
-						.append(gcodeOutputFilename).append(Constants.NEWLINE)
-						.append(", proc-output: ").append(output.getMessage())
-						.append(Constants.NEWLINE).append(", proc-error: ")
-						.append(error.getMessage()).toString());
+				final String fPath = filePath;
+				final StringBuilder gcodeOutFName = gcodeOutputFilename;
+				executorService.execute(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							Runtime rt = Runtime.getRuntime();
+							RuntimeExec rte = new RuntimeExec();
+							StreamWrapper error, output;
+							Process proc = rt.exec(execStr.toString());
+							error = rte.getStreamWrapper(proc.getErrorStream(),
+									Constants.STREAM_NAME_ERROR);
+							output = rte.getStreamWrapper(
+									proc.getInputStream(),
+									Constants.STREAM_NAME_OUTPUT);
+							int exitVal = 0;
+							error.start();
+							output.start();
+							error.join(3000);
+							output.join(3000);
+							exitVal = proc.waitFor();
+							// TODO process exitVal for caller - decide what to
+							// do in
+							// http://camel.apache.org/exception-clause.html
+							LOG.info(new StringBuilder()
+									.append("stl-file-path: ").append(fPath)
+									.append(", output-file-path:")
+									.append(gcodeOutFName)
+									.append(Constants.NEWLINE)
+									.append(", proc-output: ")
+									.append(output.getMessage())
+									.append(Constants.NEWLINE)
+									.append(", proc-error: ")
+									.append(error.getMessage()).toString());
+						} catch (Exception e) {
+							LOG.trace(e.toString());
+						}
+					}
+				});
 			}
-		} catch (IOException e) {
-			LOG.trace(e.toString());
 		} catch (InterruptedException e) {
 			LOG.trace(e.toString());
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		// exec process with buffered error and std out
+		executorService = Executors.newFixedThreadPool(2); /*
+															 * new
+															 * ThreadPoolExecutor
+															 * ( 1, // core //
+															 * thread // pool //
+															 * size 2, //
+															 * maximum thread
+															 * pool size 1, //
+															 * time to wait
+															 * before resizing
+															 * pool
+															 * TimeUnit.MINUTES,
+															 * new
+															 * ArrayBlockingQueue
+															 * <Runnable>(3,
+															 * true), new
+															 * ThreadPoolExecutor
+															 * .
+															 * CallerRunsPolicy(
+															 * ));
+															 */
 	}
 
 	/**
