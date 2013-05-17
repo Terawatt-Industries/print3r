@@ -1,10 +1,8 @@
 BigSlice Slicing Framework
 
-BigSlice is a framework which provides 3D object STL -> GCODE translation, also known as "slicing".  It's written in Java on the Apache Camel Framework.  It uses Enterprise Integration Patterns implemented with Camel's Java Domain Specific Language (DSL).
+BigSlice is a framework which provides 3D object STL -> GCODE translation, also known as "slicing".
 
-Now that I've gotten all of the buzzwords out of the way, let's get into the trenches.
-
-BigSlice provides a server that provides a drag-and-drop feature for STL file slicing.  To use it:
+BigSlice provides a server with a drag-and-drop feature for STL file slicing.  To use it:
 - Install and configure the BigSlice server on a machine on a (trusted) network
 - Drag a STL file to the data/stldrop folder
 - Retrieve GCODE from the data/out folder
@@ -51,7 +49,9 @@ If no INI files are found in data/configs - then you would expect the slicing pr
 
 Development
 -----------
-Eclipse Juno is recommended for development on this project.  It uses M2Eclipse, unfortunately; this project had to enable it at some point.  I might revert it out and force us to use command line for building and updating Eclipse references…we'll see.  I'm just not a big fan of the IDEs trying to do everything internally and visually because they typically fail for too many use-cases.
+BigSlice is written in Java using the Apache Camel Framework.  It uses Enterprise Integration Patterns implemented with Camel's Java Domain Specific Language (DSL).
+
+Eclipse Juno is recommended for development on this project
 
 Setup Development Environment using Maven Eclipse Plugin (http://maven.apache.org/plugins/maven-eclipse-plugin/eclipse-mojo.html):
 0) install Eclipse Juno (http://wiki.eclipse.org/Eclipse/Installation)
