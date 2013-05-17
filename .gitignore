@@ -1,3 +1,4 @@
+**/runtime.properties
 **/.DS_Store
 **/data/configs/**/*.ini*
 **/data/out/*.gco*
@@ -9,5 +10,3 @@ target
 **/.settings
 **/.classpath
 **/.checkstyle
-slicing-server/src/main/resources/runtime.properties
-slicing-server/data/out/bb/*.gcode
