@@ -1,11 +1,13 @@
 **/.DS_Store
-target
+**/data/configs/**/*.ini*
+**/data/out/*.gco*
+**/data/out/**/*.gco*
+**/data/done/*.stl*
 **/bin
 **/target
+target
 **/.settings
 **/.classpath
 **/.checkstyle
-**/data/configs/**/*.ini*
-**/data/out/**/*.gco*
-**/data/done/*.stl*
 slicing-server/src/main/resources/runtime.properties
+slicing-server/data/out/bb/*.gcode
