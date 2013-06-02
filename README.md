@@ -8,7 +8,7 @@ BigSlice provides a server with a drag-and-drop feature for STL file slicing.  T
 - Retrieve GCODE from the data/out folder
 - Multithreaded slicing - limited to 2 instances at a time.
 
-See the [wiki](wiki) for installation and development instructions.
+See the [wiki](https://github.com/Terawatt-Industries/bigslice/wiki) for installation and development instructions.
 
 BigSlice allows you to drag-and-drop STL files into a folder on your computer and automatically outputs GCode.  It's designed to work with Slic3r but it can be easily adapted to work with any slicing software which provides command-line-interface (CLI) execution.
 
