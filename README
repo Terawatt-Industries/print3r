@@ -1,71 +1,18 @@
-BigSlice Slicing Framework
+# BigSlice Slicing Server
 
-BigSlice is a framework which provides 3D object STL -> GCODE translation, also known as "slicing".
+BigSlice is a server which provides 3D object STL -> GCODE translation, also known as "slicing".  BigSlice runs on any OS that supports Java such as Linux, OS X, and Windows.
 
 BigSlice provides a server with a drag-and-drop feature for STL file slicing.  To use it:
 - Install and configure the BigSlice server on a machine on a (trusted) network
 - Drag a STL file to the data/stldrop folder
 - Retrieve GCODE from the data/out folder
+- Multithreaded slicing - limited to 2 instances at a time.
+
+See the [wiki] for installation and development instructions.
 
 BigSlice allows you to drag-and-drop STL files into a folder on your computer and automatically outputs GCode.  It's designed to work with Slic3r but it can be easily adapted to work with any slicing software which provides command-line-interface (CLI) execution.
 
 If you run this on your laptop/desktop, or a computer on a trusted network (or cloud server); then you would share the "data/stldrop" and "data/out" folders; then drag STL files to data/stldrop; and finally retrieve output gcode from data/out/...
 
-Why not just use Slic3r for this, for example?  BigSlice is designed for a use-case that's fairly common for 3D printer users:  slicing a single STL file using multiple slicing (Slic3r) configs.  When the server starts, it scans for Slic3r INIs and stores them.  It then uses each INI for slicing STL -> GCode; and outputs the INI used in the output filename.
+Why not just use Slic3r for this, for example?  BigSlice is designed for a use-case that's fairly common for 3D printer users:  slicing a single STL file using multiple slicing (Slic3r) configs.  When the server starts, it scans for Slic3r INIs and stores them.  It then uses each INI for slicing STL -> GCode; and outputs the STL filename tagged with the name of the INI file.
 
-Installation
-------------
-The 0.9 release is installed using Maven - Java's dependency management tool.  This is not optimal - the milestone for the 1.0 release is deployment to an OSGI container such as Karaf or ServiceMix.
-
-Thus, you have to install Maven 3 or higher (http://maven.apache.org/guides/getting-started/maven-in-five-minutes.html).
-
-Once you have maven installed:
-1)  Download the BigSlice Slicing Server source code (as zip or tar ball).
-2)  Unzip/Untar the source.
-3)  copy slicing-server/src/main/resources/runtime.properties.example -> slicing-server/src/main/resources/runtime.properties
-4)  Edit slicing-server/src/main/resources/runtime.properties with the values from your local environment.
-
-Running the App
----------------
-1)  Open a command line console (CLI).
-2)  cd [path-to-unzipped-sources]/slicing-server
-3)  mvn clean compile; mvn camel:run
-
-Upon successful launch you'll see logging info in the console.  It takes the server about 10 seconds to start, after which it only logs more info to the console when a STL file is placed in the drop folder.
-
-Upon successful startup, logging info will include lines such as:
-2013-05-16 12:07:05,089 [ing.Main.main()] INFO  SliceMarshaller                - config file ./data/configs/quux/abs_5nz3.ini stored.
-
-Troubleshooting
--------------------------
-
-If you only "cd [path-to-unzipped-sources]" (forgetting "slicing-server") and type "run mvn clean compile; mvn camel-run" you'll see something like:
-[INFO] Scanning for projects...
-[ERROR] The build could not read 1 project -> [Help 1]
-
-===
-
-If no INI files are found in data/configs - then you would expect the slicing processor to use the default config - which is how most apps like Slic3r are setup.  However, you may get unexpected results in this edge case.  If that happens then please report a bug and to workaround, export the DEFAULT ini from Slic3r - and put it in data/configs.
-
-Development
------------
-BigSlice is written in Java using the Apache Camel Framework.  It uses Enterprise Integration Patterns implemented with Camel's Java Domain Specific Language (DSL).
-
-Eclipse Juno is recommended for development on this project
-
-Setup Development Environment using Maven Eclipse Plugin (http://maven.apache.org/plugins/maven-eclipse-plugin/eclipse-mojo.html):
-0) install Eclipse Juno (http://wiki.eclipse.org/Eclipse/Installation)
-1) git-clone the project to your local workspace (or use the ZIPed sources)
-2) open a command line
-3) cd [path-to-cloned-source]
-4) mvn eclipse:eclipse
-5) open Eclipse
-6) Import Existing Projects into the workspace from [path-to-cloned-source].  See http://help.eclipse.org/helios/index.jsp?topic=%2Forg.eclipse.platform.doc.user%2Ftasks%2Ftasks-importproject.htm for more help.
-
-Debugging
----------
-Instructions for debugging in Eclipse are to-be-written.  For initial development I used the DEBUG logging in Camel, and continued the rich logging practice in BigSlice's Java class.  This seems fairly effective to start with.
-
-To enable debug logging, edit the META-INF/log4j.properties file.  Read the comments in that file for further instructions.
-
-===
