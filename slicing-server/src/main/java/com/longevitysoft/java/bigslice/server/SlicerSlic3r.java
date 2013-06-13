@@ -75,6 +75,9 @@ public class SlicerSlic3r implements CamelContextAware, InitializingBean,
 	 */
 	private ExecutorService executorService;
 
+	@Value("#{runtimeProps['app.bgthread.size']}")
+	private int executorThreadSize;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -220,7 +223,10 @@ public class SlicerSlic3r implements CamelContextAware, InitializingBean,
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		// exec process with buffered error and std out
-		executorService = Executors.newFixedThreadPool(2); /*
+		if (255 < executorThreadSize || 1 > executorThreadSize) {
+			executorThreadSize = 1;
+		}
+		executorService = Executors.newFixedThreadPool(executorThreadSize); /*
 															 * new
 															 * ThreadPoolExecutor
 															 * ( 1, // core //

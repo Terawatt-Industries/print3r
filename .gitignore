@@ -1,7 +1,9 @@
 **/runtime.properties
 **/.DS_Store
+**/nohup.out
 **/data/configs/**/*.ini*
 **/data/out/*.gco*
+**/data/out/*.zip*
 **/data/out/**/*.gco*
 **/data/done/*.stl*
 **/bin

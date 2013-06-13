@@ -4,5 +4,6 @@
 ##  Permissions beyond the scope of this license may be available at http://terawattindustries.com.
 
 app.data.path=data
+app.bgthread.size=[number-of-concurrent-command-line-slicers-in-background]
 slicer.exec.path=[path-to-slicing-executable]	# can be semi-colon list for multiple execs
 slicer.exec.outname.filter=[name-of-executable-to-use-in-output-filename]
