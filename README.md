@@ -1,6 +1,9 @@
+# Print3r
+The Print3r(c) software suite from Terawatt Industries provides robust 3D printing tools.  Currently this repository contains the source code for the Print3r Slicing Server.  It does not contain the source code for Print3r for Android (http://print3r.terawattindustries.com).
+
 # Print3r Slicing Server
 
-Print3r is a server which provides 3D object STL -> GCODE translation, also known as "slicing".  Print3r runs on any OS that supports Java such as Linux, OS X, and Windows.
+Print3r Slicing Server is a server which provides 3D object STL -> GCODE translation, also known as "slicing".  Print3r runs on any OS that supports Java such as Linux, OS X, and Windows.
 
 Print3r provides a server with a drag-and-drop feature for STL file slicing.  To use it:
 - Install and configure the PrintSkinny server on a machine on a (trusted) network
@@ -10,7 +13,7 @@ Print3r provides a server with a drag-and-drop feature for STL file slicing.  To
 
 See the [wiki](https://github.com/Terawatt-Industries/bigslice/wiki/_pages) for installation and development instructions.
 
-Prin3r allows you to drag-and-drop STL files into a folder on your computer and automatically outputs GCode.  It's designed to work with Slic3r but it can be easily adapted to work with any slicing software which provides command-line-interface (CLI) execution.
+Prin3r Slicing Server allows you to drag-and-drop STL files into a folder on your computer and automatically outputs GCode.  It's designed to work with Slic3r but it can be easily adapted to work with any slicing software which provides command-line-interface (CLI) execution.
 
 If you run this on your laptop/desktop, or a computer on a trusted network (or cloud server); then you would share the "data/stldrop" and "data/out" folders; then drag STL files to data/stldrop; and finally retrieve output gcode from data/out/...
 
