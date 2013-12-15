@@ -1,4 +1,4 @@
-# Print3r Print and Slicing Server
+# Print3r Slicing Server
 
 Print3r is a server which provides 3D object STL -> GCODE translation, also known as "slicing".  Print3r runs on any OS that supports Java such as Linux, OS X, and Windows.
 
